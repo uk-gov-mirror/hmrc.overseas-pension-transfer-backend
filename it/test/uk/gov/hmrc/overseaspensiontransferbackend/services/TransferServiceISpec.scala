@@ -17,16 +17,13 @@
 package uk.gov.hmrc.overseaspensiontransferbackend.services
 
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
-import play.api.inject
-import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, RequestId}
 import uk.gov.hmrc.overseaspensiontransferbackend.base.{BaseISpec, UserAnswersTestData}
-import uk.gov.hmrc.overseaspensiontransferbackend.connectors.TransferConnector
 import uk.gov.hmrc.overseaspensiontransferbackend.models.authentication.{PsaId, PsaUser, PspId}
 import uk.gov.hmrc.overseaspensiontransferbackend.models.dtos.{PsaSubmissionDTO, PspSubmissionDTO, SubmissionDTO}
-import uk.gov.hmrc.overseaspensiontransferbackend.models.transfer._
+import uk.gov.hmrc.overseaspensiontransferbackend.models.transfer.*
 import uk.gov.hmrc.overseaspensiontransferbackend.models.{AnswersData, PstrNumber, SavedUserAnswers}
 import uk.gov.hmrc.overseaspensiontransferbackend.repositories.SaveForLaterRepository
 
