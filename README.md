@@ -192,7 +192,7 @@ check, run unit tests, run integration tests and produce a coverage report:
 
 ## Encryption and decryption of the MongoDB Values
 
-There is a flag in application.conf, mongodb.encryption, which when switched to false will cause the Mongo save for later items to be stored and retrieved unencrypted. This is purely for testing purposes and by default it is on.
+There is a flag in application.conf, mongodb.encryption, which when switched to false will cause the Mongo save for later items to be stored and retrieved unencrypted.
 
 ### Steps to use
 
