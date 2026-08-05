@@ -34,6 +34,8 @@ import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import SaveForLaterRepository.encryptedFormat
+import SaveForLaterRepository.unencryptedFormat
 
 @Singleton
 class SaveForLaterRepository @Inject() (
@@ -45,7 +47,8 @@ class SaveForLaterRepository @Inject() (
   ) extends PlayMongoRepository[SavedUserAnswers](
       collectionName = "saved-user-answers",
       mongoComponent = mongoComponent,
-      domainFormat   = SaveForLaterRepository.encryptedFormat(encryptionService),
+      domainFormat   = if (appConfig.mongoDBEncryption) { encryptedFormat(encryptionService) }
+      else { unencryptedFormat() },
       indexes        = Seq(
         IndexModel(
           Indexes.ascending("lastUpdated"),
@@ -107,7 +110,6 @@ class SaveForLaterRepository @Inject() (
 object SaveForLaterRepository {
 
   def encryptedFormat(encryptionService: EncryptionService): OFormat[SavedUserAnswers] = {
-
     val reads: Reads[SavedUserAnswers] = (
       (__ \ "transferId").read[TransferId] and
         (__ \ "pstr").read[PstrNumber] and
@@ -134,4 +136,25 @@ object SaveForLaterRepository {
 
     OFormat(reads, writes)
   }
+
+  def unencryptedFormat(): OFormat[SavedUserAnswers] = {
+    val reads: Reads[SavedUserAnswers] = (
+      (__ \ "transferId").read[TransferId] and
+        (__ \ "pstr").read[PstrNumber] and
+        (__ \ "data").read[AnswersData] and
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
+    )(SavedUserAnswers.apply)
+
+    val writes: OWrites[SavedUserAnswers] = OWrites { ua =>
+      Json.obj(
+        "transferId"  -> ua.transferId,
+        "pstr"        -> ua.pstr,
+        "data"        -> ua.data,
+        "lastUpdated" -> MongoJavatimeFormats.instantFormat.writes(ua.lastUpdated)
+      )
+    }
+
+    OFormat(reads, writes)
+  }
+
 }
