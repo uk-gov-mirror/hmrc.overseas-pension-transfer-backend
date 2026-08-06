@@ -45,7 +45,7 @@ object TestAppConfig {
     "getAllTransfers.yearsOffset"                -> 10
   )
 
-  private val testConfigurationEncryptionOn  = {
+  private val testConfigurationEncryptionOn = {
     val items: Seq[(String, Any)] = configItems ++ Seq("mongodb.encryption" -> true)
     Configuration(items*)
   }
