@@ -28,6 +28,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.overseaspensiontransferbackend.config.AppConfig
 import uk.gov.hmrc.overseaspensiontransferbackend.models.*
 import uk.gov.hmrc.overseaspensiontransferbackend.models.transfer.{AllTransfersItem, TransferId}
+import uk.gov.hmrc.overseaspensiontransferbackend.repositories.SaveForLaterRepository.{encryptedFormat, unencryptedFormat}
 import uk.gov.hmrc.overseaspensiontransferbackend.services.EncryptionService
 
 import java.time.{Clock, Instant}
@@ -45,7 +46,8 @@ class SaveForLaterRepository @Inject() (
   ) extends PlayMongoRepository[SavedUserAnswers](
       collectionName = "saved-user-answers",
       mongoComponent = mongoComponent,
-      domainFormat   = SaveForLaterRepository.encryptedFormat(encryptionService),
+      domainFormat   = if (appConfig.mongoDBEncryption) { encryptedFormat(encryptionService) }
+      else { unencryptedFormat },
       indexes        = Seq(
         IndexModel(
           Indexes.ascending("lastUpdated"),
@@ -107,7 +109,6 @@ class SaveForLaterRepository @Inject() (
 object SaveForLaterRepository {
 
   def encryptedFormat(encryptionService: EncryptionService): OFormat[SavedUserAnswers] = {
-
     val reads: Reads[SavedUserAnswers] = (
       (__ \ "transferId").read[TransferId] and
         (__ \ "pstr").read[PstrNumber] and
@@ -134,4 +135,6 @@ object SaveForLaterRepository {
 
     OFormat(reads, writes)
   }
+
+  val unencryptedFormat: OFormat[SavedUserAnswers] = Json.format
 }

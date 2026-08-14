@@ -190,11 +190,9 @@ check, run unit tests, run integration tests and produce a coverage report:
 
 ---
 
-## Decrypt the MongoDB Values
+## Encryption and decryption of the MongoDB Values
 
-The script described below does not work. It is to be superseded soon by an encrypted flag in application.conf.
-
-The `decrypt.sh` script is used to **decrypt the `data` field** inside MongoDB documents that were stored in an encrypted format.
+There is a flag in application.conf, mongodb.encryption, which when switched to false will cause the Mongo save for later items to be stored and retrieved unencrypted.
 
 ### Steps to use
 

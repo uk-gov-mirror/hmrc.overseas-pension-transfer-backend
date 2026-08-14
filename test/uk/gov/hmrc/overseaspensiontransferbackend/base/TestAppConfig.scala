@@ -25,7 +25,7 @@ object TestAppConfig {
 
   val masterKey: String = "Test-dGVzdC1rZXktMTIzNDU2Nzg5MDEyMzQ1Ng=="
 
-  private val testConfiguration = Configuration(
+  private val configItems: Seq[(String, Any)] = Seq(
     "appName"                                    -> "overseas-pension-transfer-backend-test",
     "microservice.services.auth.host"            -> "localhost",
     "microservice.services.auth.port"            -> 8500,
@@ -45,9 +45,20 @@ object TestAppConfig {
     "getAllTransfers.yearsOffset"                -> 10
   )
 
-  private val servicesConfig = new ServicesConfig(testConfiguration)
+  private val testConfigurationEncryptionOn = {
+    val items: Seq[(String, Any)] = configItems ++ Seq("mongodb.encryption" -> true)
+    Configuration(items*)
+  }
 
-  def appConfig(): AppConfig = new AppConfig(testConfiguration, servicesConfig)
+  private val testConfigurationEncryptionOff = {
+    val items: Seq[(String, Any)] = configItems ++ Seq("mongodb.encryption" -> false)
+    Configuration(items*)
+  }
+
+  private val servicesConfig = new ServicesConfig(testConfigurationEncryptionOn)
+
+  def appConfig(): AppConfig              = new AppConfig(testConfigurationEncryptionOn, servicesConfig)
+  def appConfigEncryptionOff(): AppConfig = new AppConfig(testConfigurationEncryptionOff, servicesConfig)
 
   implicit val encryptionService: EncryptionService = new EncryptionService(masterKey)
 }

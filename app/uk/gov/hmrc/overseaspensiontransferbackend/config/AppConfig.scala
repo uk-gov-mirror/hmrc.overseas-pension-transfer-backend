@@ -29,7 +29,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val etmpBaseUrl: String          = config.get[Service]("microservice.services.hip").baseUrl
   val pensionSchemeService: String = servicesConfig.baseUrl("pensions-scheme")
 
-  val cacheTtl: Long = config.get[Int]("mongodb.timeToLiveInDays")
+  val cacheTtl: Long             = config.get[Int]("mongodb.timeToLiveInDays")
+  val mongoDBEncryption: Boolean = config.get[Boolean]("mongodb.encryption")
 
   val getAllTransfersYearsOffset: Int = config.get[Int]("getAllTransfers.yearsOffset")
 
